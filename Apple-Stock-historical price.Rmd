@@ -1,0 +1,95 @@
+---
+title: "APPL_Historical"
+author: "Alreaan, Abdullah"
+date: "Oct, 2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(magrittr)
+library(knitr)
+library(DT)
+library(ggplot2)
+library(viridis)
+library(hrbrthemes)
+library(tidyverse)
+library(lubridate)
+library(data.table)
+
+```
+
+## Descriptive Statistics
+
+This is an [R Markdown] for detailed Apple company stock prices dataset for the past 10 years.
+source of dataset: https://www.kaggle.com/tarunpaparaju/apple-aapl-historical-stock-data
+
+and We'll be answering the following research questions:
+
+1- What was the change in price of the stock over time?
+
+2- What was the daily return of the stock on average?
+
+3- How can we attempt to predict future stock behavior?
+
+
+First, let's take a look at APPL stock performance in the last 10 years to see if investing in APPL was a good call or not.
+
+Global average share price in the last 10 yrs
+
+```{r}
+apple %>% 
+  summarise(mean_of_Volume = mean(Volume),
+            mean_of_closing = mean(`Close/Last`))
+```
+
+as Shown average price for APPL in the last 10 years $114. 
+
+```{r}
+apple %>%
+  # mutate(month = format(Date, "%m"), year = format(Date, "%Y")) %>%
+  mutate (year = format(Date, "%Y")) %>% 
+  group_by(year == 2020) %>%
+  summarise(MEAN = mean(`Close/Last`))
+```
+
+
+and 2020 average price is $311 which indicates that the investment was feasible.
+
+
+below plot show how stock average share price changing as there was a decline in the of 2012 and after that, APPL Stock price continued the rise for two consecutive years. a slightly price correction occurred in 2015 before launching for successive rises until this year.
+
+
+```{r}
+ggplot(apple_summary, aes(MEAN, year, group = 1)) +
+  geom_point() +
+  geom_line() +
+  labs(x = "PRICE", 
+       y = "YEAR", 
+       title = "AVG APPL STOCK PRICE")
+```
+
+```{r}
+ggplot(apple_summary, aes(year, MEAN, fill = year)) +
+  geom_bar(stat = "identity") +
+  theme_classic() +
+  labs(x = "YEAR",
+       y = "PRICE",
+       title = paste("APPL AVG STOCK PRICE IN LAST 10 YRS"))
+
+```
+
+change percentage in price of the stock over time
+
+```{r}
+ggplot(apple_summary, aes(year,  yoy_per, group = 1)) +
+  geom_point() +
+  geom_line() +
+  labs(x = "YEAR", 
+       y = "percentage", 
+       title = "year-on-year percentage increase")
+```
+
+
+
